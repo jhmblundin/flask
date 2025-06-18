@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import importlib.metadata
-import typing as tp
+import typing as t
 from contextlib import contextmanager
 from contextlib import ExitStack
 from copy import copy
@@ -17,7 +17,7 @@ from werkzeug.wrappers import Request as BaseRequest
 from .cli import ScriptInfo
 from .sessions import SessionMixin
 
-if tp.TYPE_CHECKING:  # pragma: no cover
+if t.TYPE_CHECKING:  # pragma: no cover
     from _typeshed.wsgi import WSGIEnvironment
     from werkzeug.test import TestResponse
 
@@ -53,8 +53,8 @@ class EnvironBuilder(werkzeug.test.EnvironBuilder):
         base_url: str | None = None,
         subdomain: str | None = None,
         url_scheme: str | None = None,
-        *args: tp.Any,
-        **kwargs: tp.Any,
+        *args: t.Any,
+        **kwargs: t.Any,
     ) -> None:
         assert not (base_url or subdomain or url_scheme) or (
             base_url is not None
@@ -85,7 +85,7 @@ class EnvironBuilder(werkzeug.test.EnvironBuilder):
         self.app = app
         super().__init__(path, base_url, *args, **kwargs)
 
-    def json_dumps(self, obj: tp.Any, **kwargs: tp.Any) -> str:
+    def json_dumps(self, obj: t.Any, **kwargs: t.Any) -> str:
         """Serialize ``obj`` to a JSON-formatted string.
 
         The serialization will be configured according to the config associated
@@ -122,10 +122,10 @@ class FlaskClient(Client):
 
     application: Flask
 
-    def __init__(self, *args: tp.Any, **kwargs: tp.Any) -> None:
+    def __init__(self, *args: t.Any, **kwargs: t.Any) -> None:
         super().__init__(*args, **kwargs)
         self.preserve_context = False
-        self._new_contexts: list[tp.ContextManager[tp.Any]] = []
+        self._new_contexts: list[t.ContextManager[t.Any]] = []
         self._context_stack = ExitStack()
         self.environ_base = {
             "REMOTE_ADDR": "127.0.0.1",
@@ -134,8 +134,8 @@ class FlaskClient(Client):
 
     @contextmanager
     def session_transaction(
-        self, *args: tp.Any, **kwargs: tp.Any
-    ) -> tp.Iterator[SessionMixin]:
+        self, *args: t.Any, **kwargs: t.Any
+    ) -> t.Iterator[SessionMixin]:
         """When used in combination with a ``with`` statement this opens a
         session transaction.  This can be used to modify the session that
         the test client uses.  Once the ``with`` block is left the session is
@@ -191,7 +191,7 @@ class FlaskClient(Client):
         return out
 
     def _request_from_builder_args(
-        self, args: tuple[tp.Any, ...], kwargs: dict[str, tp.Any]
+        self, args: tuple[t.Any, ...], kwargs: dict[str, t.Any]
     ) -> BaseRequest:
         kwargs["environ_base"] = self._copy_environ(kwargs.get("environ_base", {}))
         builder = EnvironBuilder(self.application, *args, **kwargs)
@@ -203,10 +203,10 @@ class FlaskClient(Client):
 
     def open(
         self,
-        *args: tp.Any,
+        *args: t.Any,
         buffered: bool = False,
         follow_redirects: bool = False,
-        **kwargs: tp.Any,
+        **kwargs: t.Any,
     ) -> TestResponse:
         if args and isinstance(
             args[0], (werkzeug.test.EnvironBuilder, dict, BaseRequest)
@@ -268,12 +268,12 @@ class FlaskCliRunner(CliRunner):
     :meth:`~flask.Flask.test_cli_runner`. See :ref:`testing-cli`.
     """
 
-    def __init__(self, app: Flask, **kwargs: tp.Any) -> None:
+    def __init__(self, app: Flask, **kwargs: t.Any) -> None:
         self.app = app
         super().__init__(**kwargs)
 
     def invoke(  # type: ignore
-        self, cli: tp.Any = None, args: tp.Any = None, **kwargs: tp.Any
+        self, cli: t.Any = None, args: t.Any = None, **kwargs: t.Any
     ) -> Result:
         """Invokes a CLI command in an isolated environment. See
         :meth:`CliRunner.invoke <click.testing.CliRunner.invoke>` for
